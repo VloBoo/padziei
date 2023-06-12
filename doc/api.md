@@ -1,0 +1,49 @@
+# API body
+
+## Common part
+
+All data as JSON:
+
+- code
+- body
+  - ...
+
+Also:
+
+- 0 - Post
+- 1 - O
+- 2 - Get
+- 3 - 000
+
+### Codes and body
+
+#### 000
+
+Ping. (Pong is 001 from server)
+Body: *empty*
+
+#### 001
+
+This code return server.
+Body:
+
+- status - OK or NOT
+
+#### 010
+
+Set hello.
+Body:
+
+- content - string
+
+#### 012
+
+Get hello.
+Body: empty
+
+#### 013
+
+Return hello.
+Body:
+
+- content - string
