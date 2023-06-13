@@ -3,15 +3,10 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text;
 
-
 const string WEB_DIR = @"C:/Users/VloBo/Documents/code/padieja";
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
-
-
 
 app.Run(async (context) =>
 {
@@ -55,7 +50,7 @@ app.Run(async (context) =>
                 {
                     await context.Response.SendFileAsync(WEB_DIR + context.Request.Path + "/index.html");
                 }
-                catch (FileNotFoundException ee)
+                catch (FileNotFoundException)
                 {
                     context.Response.StatusCode = 404;
                     await context.Response.SendFileAsync(WEB_DIR + "/404.html");
@@ -63,16 +58,6 @@ app.Run(async (context) =>
                 return;
             }
     }
-    // context.Response.ContentType = "text/html; charset=utf-8";
-    // string str = "1";
-    // foreach (var param in context.Request.Query)
-    // {
-    //     if (param.Key == "key")
-    //     {
-    //         str = param.Value.ToString();
-    //     }
-    // }
-    // await context.Response.WriteAsync(str);
 });
 app.Run();
 
