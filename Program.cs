@@ -1,6 +1,8 @@
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text;
+
 
 const string WEB_DIR = @"C:/Users/VloBo/Documents/code/padieja";
 
@@ -31,13 +33,18 @@ app.Run(async (context) =>
                 JsonDocument jd = JsonDocument.Parse(requestBody);
                 int code = Convert.ToInt32(jd.RootElement.GetProperty("code").ToString());
 
-                // TODO: Раскинуть эти if в методы потом с атрибутами и все будет чики пуки
-
-                if (code == 12)
+                foreach (var method in typeof(ApiCodeHandler).GetMethods(BindingFlags.Public | BindingFlags.Instance))
                 {
-                    var response = context.Response;
-                    response.Headers.ContentType = "application/json; charset=utf-8";
-                    await response.WriteAsync("{\"code\":\"13\",\"body\":{\"content\":\"hello padziei\"}}");
+                    var attribute = method.GetCustomAttribute<ApiCodeAttribute>();
+                    if (attribute != null && attribute.Code == code)
+                    {
+                        app.Logger.LogDebug("1111111111111111111111111111111111111");
+                        Task? task = (Task?)(method.Invoke(new ApiCodeHandler(), new Object[] { context }));
+                        if (task is not null)
+                        {
+                            await task;
+                        }
+                    }
                 }
 
                 return;
