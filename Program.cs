@@ -44,7 +44,15 @@ app.Run(async (context) =>
             }
         case var b when new Regex(@"^\/.*$").IsMatch(b):
             {
-                await context.Response.SendFileAsync(WEB_DIR + "/index.html");
+                try
+                {
+                    await context.Response.SendFileAsync(WEB_DIR + context.Request.Path + "/index.html");
+                }
+                catch (FileNotFoundException ee)
+                {
+                    context.Response.StatusCode = 404;
+                    await context.Response.SendFileAsync(WEB_DIR + "/404.html");
+                }
                 return;
             }
     }
