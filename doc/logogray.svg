@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+	 xml:space="preserve">
+<style type="text/css">
+	.st3{fill:none;stroke:#c3c8d3;stroke-width:20;stroke-miterlimit:10;}
+	.st4{fill:#c3c8d3;}
+</style>
+<polygon class="st3" points="320,240.47 512,432.47 704,240.47 975.53,512 704,783.53 512,591.53 320,783.53 48.47,512 "/>
+<g>
+	
+		<rect x="224" y="416" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -268.3128 376.2355)" class="st4" width="192" height="192"/>
+</g>
+<g>
+	
+		<rect x="608" y="416" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -155.8418 647.7645)" class="st4" width="192" height="192"/>
+</g>
+</svg>
