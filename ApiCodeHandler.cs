@@ -1,9 +1,4 @@
-using Npgsql;
 using System.Text.Json;
-using System.Diagnostics;
-using System;
-using System.Security.Cryptography;
-using System.Text;
 
 public class ApiCodeHandler
 {
