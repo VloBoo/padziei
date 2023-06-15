@@ -28,6 +28,7 @@ This code return server.
 Body:
 
 - status - OK or NOT
+- message - optional if status is NOT
 
 #### 010
 
@@ -47,3 +48,20 @@ Return hello.
 Body:
 
 - content - string
+
+#### 020
+
+Registration
+Body:
+
+- username - string
+- email - string
+- password - string
+
+#### 030
+
+Auth
+Body:
+
+- username - string
+- password - string

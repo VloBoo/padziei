@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 using System.Text;
 
-const string WEB_DIR = @"C:/Users/VloBo/Documents/code/padieja";
+const string WEB_DIR = @"C:/Users/VloBo/Documents/code/padziei-webpages";
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -33,8 +33,7 @@ app.Run(async (context) =>
                     var attribute = method.GetCustomAttribute<ApiCodeAttribute>();
                     if (attribute != null && attribute.Code == code)
                     {
-                        app.Logger.LogDebug("1111111111111111111111111111111111111");
-                        Task? task = (Task?)(method.Invoke(new ApiCodeHandler(), new Object[] { context }));
+                        Task? task = (Task?)(method.Invoke(new ApiCodeHandler(), new Object[] { context, jd }));
                         if (task is not null)
                         {
                             await task;
