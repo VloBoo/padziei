@@ -18,18 +18,24 @@ public class Program
 
         app.Run(async (context) =>
         {
-            app.Logger.LogDebug(context.Request.Path);
-            foreach (var method in typeof(PathHandler).GetMethods(BindingFlags.Public | BindingFlags.Instance))
+            try
             {
-                var attribute = method.GetCustomAttribute<PathAttribute>();
-                if (attribute != null && new Regex(attribute.Regex).IsMatch(context.Request.Path))
+                foreach (var method in typeof(PathHandler).GetMethods(BindingFlags.Public | BindingFlags.Instance))
                 {
-                    Task? task = (Task?)(method.Invoke(new PathHandler(), new Object[] { context }));
-                    if (task is not null)
+                    var attribute = method.GetCustomAttribute<PathAttribute>();
+                    if (attribute != null && new Regex(attribute.Regex).IsMatch(context.Request.Path))
                     {
-                        await task;
+                        Task? task = (Task?)(method.Invoke(new PathHandler(), new Object[] { context }));
+                        if (task is not null)
+                        {
+                            await task;
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                app.Logger.LogError("КРИТИЧЕСКАЯ ОШИБКА ОБРАБОТКИ ЗАПРОСА\n" + e.Message);
             }
             return;
         });
