@@ -1,5 +1,10 @@
 using Npgsql;
 using System.Text.Json;
+using System.Diagnostics;
+using System;
+using System.Security.Cryptography;
+using System.Text;
+
 public class ApiCodeHandler
 {
 
@@ -10,30 +15,35 @@ public class ApiCodeHandler
         response.Headers.ContentType = "application/json; charset=utf-8";
         await response.WriteAsync("{\"code\":\"13\",\"body\":{\"content\":\"hello padziei\"}}");
     }
+
     [ApiCode(20)]
     public async void code20(HttpContext context, JsonDocument jd)
     {
-        var connString = "Server=localhost;Port=5432;Database=padziei;User Id=postgres;Password=postgres1;";
 
-        string strbuf = "";
+        string username = jd.RootElement.GetProperty("body").GetProperty("username").ToString();
+        string email = jd.RootElement.GetProperty("body").GetProperty("email").ToString();
+        string password = jd.RootElement.GetProperty("body").GetProperty("password").ToString();
 
-        using (var conn = new NpgsqlConnection(connString))
+        string status = -1 != Database.Hinstance.CreateUser(username, password, email) ? "OK" : "NOT";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"content\":\"" + status + "\"}}");
+    }
+
+    [ApiCode(999)]
+    public async void code999(HttpContext context, JsonDocument jd)
+    {
+        string username = jd.RootElement.GetProperty("body").GetProperty("username").ToString();
+        var uuid = Database.Hinstance.FindUserByUsername(username);
+        string uuidstr = "Not Found UUID";
+        if (uuid is not null)
         {
-            conn.Open();
-            using (var command = new NpgsqlCommand("SELECT column_name FROM information_schema.columns WHERE table_name = 'users'", conn))
-            {
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        strbuf += $"{reader.GetString(0)} ";
-                    }
-                }
-            }
+            uuidstr = uuid.ToString() ?? "Not Found UUID";
         }
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";
-        await response.WriteAsync("{\"code\":\"23\",\"body\":{\"content\":\"" + strbuf + "\"}}");
+        await response.WriteAsync("{\"code\":\"1000\",\"body\":{\"uuid\":\"" + uuidstr + "\"}}");
     }
 }
 
