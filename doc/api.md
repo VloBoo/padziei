@@ -65,3 +65,10 @@ Body:
 
 - username - string
 - password - string
+
+#### 033
+
+Return token
+Body:
+
+- token - string

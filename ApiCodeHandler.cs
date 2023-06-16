@@ -26,19 +26,18 @@ public class ApiCodeHandler
         await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
     }
 
-    [ApiCode(999)]
-    public async Task code999(HttpContext context, JsonDocument jd)
+    [ApiCode(30)]
+    public async Task code30(HttpContext context, JsonDocument jd)
     {
+
         string username = jd.RootElement.GetProperty("body").GetProperty("username").ToString();
-        var uuid = Database.Hinstance.FindUserByUsername(username);
-        string uuidstr = "Not Found UUID";
-        if (uuid is not null)
-        {
-            uuidstr = uuid.ToString() ?? "Not Found UUID";
-        }
+        string password = jd.RootElement.GetProperty("body").GetProperty("password").ToString();
+
+        string token = (Database.Hinstance.CreateToken(username, password) ?? new Guid()).ToString();
+
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";
-        await response.WriteAsync("{\"code\":\"1000\",\"body\":{\"uuid\":\"" + uuidstr + "\"}}");
+        await response.WriteAsync("{\"code\":\"33\",\"body\":{\"token\":\"" + token + "\"}}");
     }
 }
 

@@ -55,9 +55,33 @@ class Database
                 return command.ExecuteNonQuery();
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Program.app.Logger.LogError(e.Message);
             return -1;
+        }
+    }
+
+    public Guid? CreateToken(string username, string password)
+    {
+        string hashPassword = password;
+        using (var sha256 = SHA256.Create())
+        {
+            hashPassword = Convert.ToHexString(sha256.ComputeHash(Encoding.UTF8.GetBytes(password)));
+        }
+        try
+        {
+            string sqlstr = $"SELECT id FROM Users WHERE username = '{username}' AND password = '{hashPassword}'";
+            Program.app.Logger.LogWarning(sqlstr);
+            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            {
+                return (Guid?)command.ExecuteScalar();
+            }
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message);
+            return null;
         }
     }
 }
