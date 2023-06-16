@@ -5,14 +5,14 @@ using System.Text.Json;
 public class PathHandler
 {
     [Path(@"^\/(css|js).*$")]
-    public async void fun1(HttpContext context)
+    public async Task fun1(HttpContext context)
     {
         await context.Response.SendFileAsync(Program.WEB_DIR + context.Request.Path);
         return;
     }
 
     [Path(@"^\/api.*$")]
-    public async void fun2(HttpContext context)
+    public async Task fun2(HttpContext context)
     {
         string requestBody;
         using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8))
@@ -31,13 +31,14 @@ public class PathHandler
                 if (task is not null)
                 {
                     await task;
+                    return;
                 }
             }
         }
         return;
     }
     [Path(@"^\/.*\..*$")]
-    public async void fun3(HttpContext context)
+    public async Task fun3(HttpContext context)
     {
         try
         {
@@ -51,7 +52,7 @@ public class PathHandler
         return;
     }
     [Path(@"\/?.*$")]
-    public async void fun4(HttpContext context)
+    public async Task fun4(HttpContext context)
     {
         try
         {

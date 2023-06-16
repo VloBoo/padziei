@@ -4,7 +4,7 @@ public class ApiCodeHandler
 {
 
     [ApiCode(12)]
-    public async void code12(HttpContext context, JsonDocument jd)
+    public async Task code12(HttpContext context, JsonDocument jd)
     {
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";
@@ -12,7 +12,7 @@ public class ApiCodeHandler
     }
 
     [ApiCode(20)]
-    public async void code20(HttpContext context, JsonDocument jd)
+    public async Task code20(HttpContext context, JsonDocument jd)
     {
 
         string username = jd.RootElement.GetProperty("body").GetProperty("username").ToString();
@@ -27,7 +27,7 @@ public class ApiCodeHandler
     }
 
     [ApiCode(999)]
-    public async void code999(HttpContext context, JsonDocument jd)
+    public async Task code999(HttpContext context, JsonDocument jd)
     {
         string username = jd.RootElement.GetProperty("body").GetProperty("username").ToString();
         var uuid = Database.Hinstance.FindUserByUsername(username);

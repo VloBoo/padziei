@@ -23,10 +23,11 @@ public class Program
                     var attribute = method.GetCustomAttribute<PathAttribute>();
                     if (attribute != null && new Regex(attribute.Regex).IsMatch(context.Request.Path))
                     {
-                        Task? task = (Task?)(method.Invoke(new PathHandler(), new Object[] { context }));
+                        Task task = (Task)(method.Invoke(new PathHandler(), new Object[] { context }));
                         if (task is not null)
                         {
                             await task;
+                            return;
                         }
                     }
                 }
