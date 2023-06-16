@@ -46,12 +46,18 @@ class Database
         {
             hashPassword = Convert.ToHexString(sha256.ComputeHash(Encoding.UTF8.GetBytes(password)));
         }
-
-        string sqlstr = $"INSERT INTO Users Values ('{Guid.NewGuid().ToString()}', '{username}', '{hashPassword}', '{DateTime.Now.ToUniversalTime().ToString()}', '{email}', 'normal')";
-        Program.app.Logger.LogWarning(sqlstr);
-        using (var command = new NpgsqlCommand(sqlstr, this._connection))
+        try
         {
-            return command.ExecuteNonQuery();
+            string sqlstr = $"INSERT INTO Users Values ('{Guid.NewGuid().ToString()}', '{username}', '{hashPassword}', '{DateTime.Now.ToUniversalTime().ToString()}', '{email}', 'normal')";
+            Program.app.Logger.LogWarning(sqlstr);
+            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            {
+                return command.ExecuteNonQuery();
+            }
+        }
+        catch (Exception)
+        {
+            return -1;
         }
     }
 }

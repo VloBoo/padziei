@@ -23,7 +23,7 @@ public class ApiCodeHandler
 
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";
-        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"content\":\"" + status + "\"}}");
+        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
     }
 
     [ApiCode(999)]
