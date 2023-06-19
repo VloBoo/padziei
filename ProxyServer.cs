@@ -19,7 +19,7 @@ class ProxyServer
             while (true)
             {
                 TcpClient client = await listener.AcceptTcpClientAsync();
-                Program.app.Logger.LogDebug("Proxy connected opened");
+                Program.app.Logger.LogDebug("Proxy connection opened");
 
                 _ = HandleClient(client);
             }
@@ -57,7 +57,7 @@ class ProxyServer
                 Program.app.Logger.LogError("Failed to send information on proxy server: \n" + ex.Message + "\n" + ex.StackTrace);
             }
 
-            Program.app.Logger.LogDebug("Proxy connected closed");
+            Program.app.Logger.LogDebug("Proxy connection closed");
         }
     }
 }
