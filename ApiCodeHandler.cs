@@ -33,11 +33,16 @@ public class ApiCodeHandler
         string username = jd.RootElement.GetProperty("body").GetProperty("username").ToString();
         string password = jd.RootElement.GetProperty("body").GetProperty("password").ToString();
 
-        string token = (Database.Hinstance.CreateToken(username, password) ?? new Guid()).ToString();
+        Guid? g = Database.Hinstance.CreateToken(username, password);
+        string status = g is null ? "NOT" : "OK";
 
         var response = context.Response;
+        if (g is not null)
+        {
+            response.Cookies.Append("_t", g.ToString() ?? "_");
+        }
         response.Headers.ContentType = "application/json; charset=utf-8";
-        await response.WriteAsync("{\"code\":\"33\",\"body\":{\"token\":\"" + token + "\"}}");
+        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
     }
 }
 
