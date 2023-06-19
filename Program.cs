@@ -14,6 +14,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         app = builder.Build();
 
+        _ = ProxyServer.Start();
+
         app.Run(async (context) =>
         {
             try
