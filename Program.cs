@@ -20,6 +20,8 @@ public class Program
         {
             try
             {
+                app.Logger.LogWarning(context.Connection.LocalIpAddress + " " + context.Connection.RemoteIpAddress);
+
                 foreach (var method in typeof(PathHandler).GetMethods(BindingFlags.Public | BindingFlags.Instance))
                 {
                     var attribute = method.GetCustomAttribute<PathAttribute>();

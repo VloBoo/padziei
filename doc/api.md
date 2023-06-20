@@ -65,3 +65,25 @@ Body:
 
 - username - string
 - password - string
+
+#### 042
+
+Get info about users
+
+Body:
+
+- id or token - string
+
+#### 043
+
+Return info about users
+
+Body:
+
+- status
+- user
+  - id
+  - username
+  - date
+  - email - if used token
+  - role - string
