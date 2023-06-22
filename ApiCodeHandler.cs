@@ -48,7 +48,7 @@ public class ApiCodeHandler
     [ApiCode(42)]
     public async Task code42(HttpContext context, JsonDocument jd)
     {
-        Program.app.Logger.LogWarning("1");
+        Program.app.Logger.LogWarning(jd.RootElement.ToString());
         Guid? token;
         Guid? id;
         try
@@ -102,6 +102,41 @@ public class ApiCodeHandler
             }
         }
     }
+
+    [ApiCode(52)]
+    public async Task code52(HttpContext context, JsonDocument jd)
+    {
+
+        int count = Convert.ToInt32(jd.RootElement.GetProperty("body").GetProperty("count").ToString());
+
+        Guid[] guids = Database.Hinstance.SelectTopThreads(count);
+
+        string asnwer = "[";
+        for (int i = 0; i < guids.Length - 1; i++)
+        {
+            asnwer += "\"" + guids[i].ToString() + "\",";
+        }
+        asnwer += "\"" + guids[guids.Length - 1].ToString() + "\"]";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"53\",\"body\":{\"threads\":" + asnwer + "}}");
+    }
+
+    [ApiCode(62)]
+    public async Task code62(HttpContext context, JsonDocument jd)
+    {
+
+        Guid id = new Guid(jd.RootElement.GetProperty("body").GetProperty("id").ToString());
+
+        string str = Database.Hinstance.GetThredInfo(id) ?? "{}";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"63\",\"body\":" + str + "}");
+        Program.app.Logger.LogWarning("{\"code\":\"63\",\"body\":" + str + "}");
+    }
+
 }
 
 

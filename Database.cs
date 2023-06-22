@@ -7,9 +7,9 @@ class Database
 {
     private static Database? HINSTANCE;
     private NpgsqlConnection _connection;
+    private const string CONNECTION_STRING = "Server=localhost;Port=5432;Database=padziei;User Id=postgres;Password=postgres1;";
     private Database()
     {
-        const string CONNECTION_STRING = "Server=localhost;Port=5432;Database=padziei;User Id=postgres;Password=postgres1;";
         this._connection = new NpgsqlConnection(CONNECTION_STRING);
         this._connection.Open();
     }
@@ -32,11 +32,15 @@ class Database
 
     public Guid? FindUserByUsername(string username)
     {
-        string sqlstr = $"SELECT id FROM Users WHERE Users.username = '{username}'";
+        string sqlstr = $"SELECT id FROM Users WHERE Users.username = '{username}';";
         Guid? ret;
-        using (var command = new NpgsqlCommand(sqlstr, this._connection))
+        using (var con = new NpgsqlConnection(CONNECTION_STRING))
         {
-            ret = (Guid?)command.ExecuteScalar();
+            con.Open();
+            using (var command = new NpgsqlCommand(sqlstr, con))
+            {
+                ret = (Guid?)command.ExecuteScalar();
+            }
         }
         return ret;
     }
@@ -50,12 +54,16 @@ class Database
         }
         try
         {
-            string sqlstr = $"INSERT INTO Users VALUES ('{Guid.NewGuid().ToString()}', '{username}', '{hashPassword}', '{DateTime.Now.ToUniversalTime().ToString()}', '{email}', 'normal')";
+            string sqlstr = $"INSERT INTO Users VALUES ('{Guid.NewGuid().ToString()}', '{username}', '{hashPassword}', '{DateTime.Now.ToUniversalTime().ToString()}', '{email}', 'normal');";
             Program.app.Logger.LogDebug(sqlstr);
             int ret = 0;
-            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
             {
-                ret = command.ExecuteNonQuery();
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    ret = command.ExecuteNonQuery();
+                }
             }
             return ret;
         }
@@ -75,12 +83,16 @@ class Database
         }
         try
         {
-            string sqlstr = $"SELECT id FROM Users WHERE username = '{username}' AND password = '{hashPassword}'";
+            string sqlstr = $"SELECT id FROM Users WHERE username = '{username}' AND password = '{hashPassword}';";
             Program.app.Logger.LogDebug(sqlstr);
             Guid? guid;
-            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
             {
-                guid = (Guid?)command.ExecuteScalar();
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    guid = (Guid?)command.ExecuteScalar();
+                }
             }
 
             if (guid is null)
@@ -88,11 +100,15 @@ class Database
                 return null;
             }
             Guid token_guid = Guid.NewGuid();
-            sqlstr = $"INSERT INTO tokens VALUES ('{token_guid.ToString()}', '{guid.ToString()}', '{DateTime.Now.ToUniversalTime().ToString()}', '30 day')";
+            sqlstr = $"INSERT INTO tokens VALUES ('{token_guid.ToString()}', '{guid.ToString()}', '{DateTime.Now.ToUniversalTime().ToString()}', '30 day');";
             int i = 0;
-            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
             {
-                i = command.ExecuteNonQuery();
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    i = command.ExecuteNonQuery();
+                }
             }
             if (i > 0)
             {
@@ -115,10 +131,14 @@ class Database
         Guid? ret;
         try
         {
-            string sqlstr = $"SELECT user_id FROM tokens WHERE id = '{userToken.ToString()}'";
-            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            string sqlstr = $"SELECT user_id FROM tokens WHERE id = '{userToken.ToString()}';";
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
             {
-                ret = (Guid?)command.ExecuteScalar();
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    ret = (Guid?)command.ExecuteScalar();
+                }
             }
             return ret;
         }
@@ -133,20 +153,24 @@ class Database
     {
         try
         {
-            string sqlstr = $"SELECT * FROM Users WHERE id = '{userGuid.ToString()}'";
+            string sqlstr = $"SELECT * FROM Users WHERE id = '{userGuid.ToString()}';";
             string outt = "";
-            using (var command = new NpgsqlCommand(sqlstr, this._connection))
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
             {
-                using (var reader = command.ExecuteReader())
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
                 {
-                    reader.Read();
-                    outt = "{" +
-                    "\"id\":\"" + reader.GetGuid(0) + "\"," +
-                    "\"username\":\"" + reader.GetString(1) + "\"," +
-                    (email ? ("\"email\":\"" + reader.GetString(4) + "\",") : "") +
-                    "\"date\":\"" + reader.GetDateTime(3).ToString("dd.MM.yyyy hh:mm") + "\"," +
-                    "\"role\":\"" + reader.GetString(5) + "\"" +
-                    "}";
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        outt = "{" +
+                        "\"id\":\"" + reader.GetGuid(0) + "\"," +
+                        "\"username\":\"" + reader.GetString(1) + "\"," +
+                        (email ? ("\"email\":\"" + reader.GetString(4) + "\",") : "") +
+                        "\"date\":\"" + reader.GetDateTime(3).ToString("dd.MM.yyyy hh:mm") + "\"," +
+                        "\"role\":\"" + reader.GetString(5) + "\"" +
+                        "}";
+                    }
                 }
             }
             return outt;
@@ -157,4 +181,69 @@ class Database
             return null;
         }
     }
+
+    public string? GetThredInfo(Guid threadGuid)
+    {
+        try
+        {
+            string sqlstr = $"SELECT * FROM Threads WHERE id = '{threadGuid.ToString()}';";
+            string outt = "";
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+
+                        outt = "{" +
+                        "\"id\":\"" + reader.GetGuid(0) + "\"," +
+                        "\"author\":\"" + reader.GetGuid(1) + "\"," +
+                        "\"date\":\"" + reader.GetDateTime(2).ToString("dd.MM.yyyy hh:mm") + "\"," +
+                        "\"title\":\"" + reader.GetString(3) + "\"," +
+                        "\"body\":\"" + reader.GetString(4) + "\"," +
+                        "\"karma_count\":\"" + ((Guid[])reader["karma"]).Length + "\"" +
+                        "}";
+                    }
+                }
+            }
+            return outt;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
+            return null;
+        }
+    }
+
+    public Guid[] SelectTopThreads(int count)
+    {
+        try
+        {
+            string sqlstr = $"SELECT id FROM Threads LIMIT {count};";
+            List<Guid> guids = new List<Guid>();
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            guids.Add((Guid)reader["id"]);
+                        }
+                    }
+                }
+            }
+            return guids.ToArray();
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
+            return new Guid[0];
+        }
+    }
+
 }

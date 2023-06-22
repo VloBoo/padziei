@@ -38,7 +38,7 @@ public class Program
             }
             catch (Exception e)
             {
-                app.Logger.LogError("КРИТИЧЕСКАЯ ОШИБКА ОБРАБОТКИ ЗАПРОСА\n" + e.Message);
+                app.Logger.LogError("КРИТИЧЕСКАЯ ОШИБКА ОБРАБОТКИ ЗАПРОСА\n" + e.Message + "\n\n" + e.StackTrace);
             }
             return;
         });

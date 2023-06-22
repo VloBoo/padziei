@@ -85,5 +85,42 @@ Body:
   - id
   - username
   - date
-  - email - if used token
+  - email - if used token (this is shitcode, we need to remove it)
   - role - string
+
+#### 052
+
+Get x Theads
+
+Body:
+
+- count - this is x
+
+#### 053
+
+Return 10 uuids of Theads
+
+Body:
+
+- threads - uuid[]
+
+#### 062
+
+Get Thead Info
+
+Body:
+
+- id
+
+#### 063
+
+Return Thread Info
+
+Body:
+
+- id
+- author
+- date
+- title
+- body
+- karma_count

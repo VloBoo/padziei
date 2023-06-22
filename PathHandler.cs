@@ -4,12 +4,23 @@ using System.Text.Json;
 
 public class PathHandler
 {
-    [Path(@"^\/(css|js).*$")]
+    [Path(@"^\/(js).*$")]
     public async Task fun1(HttpContext context)
     {
+        var response = context.Response;
+        response.Headers.ContentType = "text/javascript; charset=utf-8";
         await context.Response.SendFileAsync(Program.WEB_DIR + context.Request.Path);
         return;
     }
+    [Path(@"^\/(css).*$")]
+    public async Task fun0(HttpContext context)
+    {
+        var response = context.Response;
+        response.Headers.ContentType = "text/css; charset=utf-8";
+        await context.Response.SendFileAsync(Program.WEB_DIR + context.Request.Path);
+        return;
+    }
+
 
     [Path(@"^\/api.*$")]
     public async Task fun2(HttpContext context)
