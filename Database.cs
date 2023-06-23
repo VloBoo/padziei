@@ -246,4 +246,36 @@ class Database
         }
     }
 
+    public Guid? CreateThread(Guid token, string title, string content)
+    {
+        Guid? user = GetUserByToken(token);
+        if (user is null)
+        {
+            return null;
+        }
+        Guid? ret;
+        try
+        {
+            string sqlstr = $"INSERT INTO Threads (id, author, data_create, title, body, karma) VALUES ('{Guid.NewGuid().ToString()}', '{user.ToString()}', '{DateTime.Now.ToUniversalTime().ToString()}', '{title}', '{content}', ARRAY[uuid('{user.ToString()}')]) RETURNING id;";
+            Program.app.Logger.LogWarning(sqlstr);
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        ret = (Guid)reader["id"];
+                    }
+                }
+            }
+            return ret;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
+            return null;
+        }
+    }
 }

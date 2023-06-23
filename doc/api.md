@@ -124,3 +124,21 @@ Body:
 - title
 - body
 - karma_count
+
+#### 070
+
+Create thread
+
+Body:
+
+- token
+- title
+- content
+
+#### 071
+
+Return id created thread
+
+Body:
+
+- id

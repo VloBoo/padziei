@@ -137,6 +137,27 @@ public class ApiCodeHandler
         Program.app.Logger.LogWarning("{\"code\":\"63\",\"body\":" + str + "}");
     }
 
+    [ApiCode(70)]
+    public async Task code70(HttpContext context, JsonDocument jd)
+    {
+
+        Guid token = new Guid(jd.RootElement.GetProperty("body").GetProperty("token").ToString());
+        string title = jd.RootElement.GetProperty("body").GetProperty("title").ToString();
+        string content = jd.RootElement.GetProperty("body").GetProperty("content").ToString();
+
+        Guid? id = Database.Hinstance.CreateThread(token, title, content);
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        if (id is null)
+        {
+            await response.WriteAsync("{\"code\":\"71\",\"body\":{\"id\":null}}");
+            return;
+        }
+        await response.WriteAsync("{\"code\":\"71\",\"body\":{\"id\":\"" + id + "\"}}");
+        Program.app.Logger.LogWarning("{\"code\":\"71\",\"body\":{\"id\":\"" + id + "\"}}");
+    }
+
 }
 
 
