@@ -278,4 +278,99 @@ class Database
             return null;
         }
     }
+
+    public Guid[] GetCommentsFromThread(Guid thread)
+    {
+        try
+        {
+            string sqlstr = $"SELECT id FROM Comments WHERE thread_id = '{thread.ToString()}';";
+            List<Guid> guids = new List<Guid>();
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            guids.Add((Guid)reader["id"]);
+                        }
+                    }
+                }
+            }
+            return guids.ToArray();
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
+            return new Guid[0];
+        }
+    }
+
+    public string? GetCommentInfo(Guid id)
+    {
+        try
+        {
+            string sqlstr = $"SELECT * FROM Comments WHERE id = '{id.ToString()}';";
+            string ret = "";
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        ret = "{" +
+                       "\"id\":\"" + reader.GetGuid(0) + "\"," +
+                       "\"thread\":\"" + reader.GetGuid(1) + "\"," +
+                       "\"author\":\"" + reader.GetGuid(2) + "\"," +
+                       "\"date\":\"" + reader.GetDateTime(3).ToString("dd.MM.yyyy hh:mm") + "\"," +
+                       "\"content\":\"" + reader.GetString(4) + "\"" +
+                       "}";
+                    }
+                }
+            }
+            return ret;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
+            return null;
+        }
+    }
+
+    public Guid? CreateComment(Guid token, Guid thread, string content)
+    {
+        Guid? user = GetUserByToken(token);
+        if (user is null)
+        {
+            return null;
+        }
+        Guid? ret;
+        try
+        {
+            string sqlstr = $"INSERT INTO Comments (id, thread_id, author, data_create, body) VALUES ('{Guid.NewGuid().ToString()}', '{thread.ToString()}', '{user.ToString()}', '{DateTime.Now.ToUniversalTime().ToString()}', '{content}') RETURNING id;";
+            Program.app.Logger.LogWarning(sqlstr);
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        reader.Read();
+                        ret = (Guid)reader["id"];
+                    }
+                }
+            }
+            return ret;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
+            return null;
+        }
+    }
 }

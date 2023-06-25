@@ -158,6 +158,68 @@ public class ApiCodeHandler
         Program.app.Logger.LogWarning("{\"code\":\"71\",\"body\":{\"id\":\"" + id + "\"}}");
     }
 
+    [ApiCode(82)]
+    public async Task code82(HttpContext context, JsonDocument jd)
+    {
+
+        Guid thread = new Guid(jd.RootElement.GetProperty("body").GetProperty("thread").ToString());
+
+        Guid[] guids = Database.Hinstance.GetCommentsFromThread(thread);
+
+        string asnwer = "[";
+        for (int i = 0; i < guids.Length - 1; i++)
+        {
+            asnwer += "\"" + guids[i].ToString() + "\",";
+        }
+        if (guids.Length == 0)
+        {
+            asnwer += "]";
+        }
+        else
+        {
+            asnwer += "\"" + guids[guids.Length - 1].ToString() + "\"]";
+        }
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"83\",\"body\":{\"comments\":" + asnwer + "}}");
+    }
+
+    [ApiCode(92)]
+    public async Task code92(HttpContext context, JsonDocument jd)
+    {
+
+        Guid id = new Guid(jd.RootElement.GetProperty("body").GetProperty("id").ToString());
+
+        string str = Database.Hinstance.GetCommentInfo(id) ?? "{}";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"93\",\"body\":" + str + "}");
+        Program.app.Logger.LogWarning("{\"code\":\"93\",\"body\":" + str + "}");
+    }
+
+    [ApiCode(100)]
+    public async Task code100(HttpContext context, JsonDocument jd)
+    {
+
+        Guid token = new Guid(jd.RootElement.GetProperty("body").GetProperty("token").ToString());
+        Guid thread = new Guid(jd.RootElement.GetProperty("body").GetProperty("thread").ToString());
+        string content = jd.RootElement.GetProperty("body").GetProperty("content").ToString();
+
+        Guid? id = Database.Hinstance.CreateComment(token, thread, content);
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        if (id is null)
+        {
+            await response.WriteAsync("{\"code\":\"71\",\"body\":{\"id\":null}}");
+            return;
+        }
+        await response.WriteAsync("{\"code\":\"101\",\"body\":{\"id\":\"" + id + "\"}}");
+        Program.app.Logger.LogWarning("{\"code\":\"101\",\"body\":{\"id\":\"" + id + "\"}}");
+    }
+
 }
 
 

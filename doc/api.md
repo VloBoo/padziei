@@ -142,3 +142,57 @@ Return id created thread
 Body:
 
 - id
+
+#### 082
+
+Get comments
+
+Body:
+
+- thread
+
+#### 083
+
+Return comments
+
+Body:
+
+- comments - uuid[]
+
+#### 092
+
+Get comment info
+
+Body:
+
+- id
+
+#### 093
+
+Return comment info
+
+Body:
+
+- id
+- thread
+- author
+- date
+- content
+
+#### 100
+
+Create comment
+
+Body:
+
+- token
+- thread
+- content
+
+#### 101
+
+Return id created comment
+
+Body:
+
+- id
