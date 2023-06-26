@@ -270,6 +270,58 @@ public class ApiCodeHandler
         await response.WriteAsync("{\"code\":\"101\",\"body\":{\"id\":\"" + id + "\"}}");
         Program.app.Logger.LogWarning("{\"code\":\"101\",\"body\":{\"id\":\"" + id + "\"}}");
     }
+
+    /// <summary>
+    /// Обработчик кода 110.
+    /// </summary>
+    /// <param name="context">Контекст HTTP-запроса.</param>
+    /// <param name="jd">JSON-документ.</param>
+    [ApiCode(110)]
+    public async Task code110(HttpContext context, JsonDocument jd)
+    {
+        Guid id = new Guid(jd.RootElement.GetProperty("body").GetProperty("id").ToString());
+
+        string status = -1 != Database.Hinstance.RemoveThread(id) ? "OK" : "NOT";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
+    }
+
+    /// <summary>
+    /// Обработчик кода 120.
+    /// </summary>
+    /// <param name="context">Контекст HTTP-запроса.</param>
+    /// <param name="jd">JSON-документ.</param>
+    [ApiCode(120)]
+    public async Task code120(HttpContext context, JsonDocument jd)
+    {
+        Guid id = new Guid(jd.RootElement.GetProperty("body").GetProperty("id").ToString());
+
+        string status = -1 != Database.Hinstance.RemoveUser(id) ? "OK" : "NOT";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
+    }
+
+    /// <summary>
+    /// Обработчик кода 130.
+    /// </summary>
+    /// <param name="context">Контекст HTTP-запроса.</param>
+    /// <param name="jd">JSON-документ.</param>
+    [ApiCode(130)]
+    public async Task code130(HttpContext context, JsonDocument jd)
+    {
+        Guid id = new Guid(jd.RootElement.GetProperty("body").GetProperty("user").ToString());
+        string role = jd.RootElement.GetProperty("body").GetProperty("role").ToString();
+
+        string status = -1 != Database.Hinstance.SetUserRole(id, role) ? "OK" : "NOT";
+
+        var response = context.Response;
+        response.Headers.ContentType = "application/json; charset=utf-8";
+        await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
+    }
 }
 
 

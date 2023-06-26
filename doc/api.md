@@ -196,3 +196,28 @@ Return id created comment
 Body:
 
 - id
+
+#### 110
+
+Delete Thead
+
+Body:
+
+- id
+
+#### 120
+
+Delete Comment
+
+Body:
+
+- id
+
+#### 130
+
+Set role
+
+Body:
+
+- user
+- role

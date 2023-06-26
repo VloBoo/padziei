@@ -45,6 +45,10 @@ class Database
         return ret;
     }
 
+    // normal
+    // banned
+    // admin
+
     public int CreateUser(string username, string password, string email)
     {
         string hashPassword = password;
@@ -371,6 +375,78 @@ class Database
         {
             Program.app.Logger.LogError(e.Message + "\n" + e.StackTrace);
             return null;
+        }
+    }
+
+    public int SetUserRole(Guid user, string role)
+    {
+        try
+        {
+            string sqlstr = $"UPDATE Users SET role = '{role}' WHERE id = '{user.ToString()}';";
+            Program.app.Logger.LogDebug(sqlstr);
+            int ret = 0;
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    ret = command.ExecuteNonQuery();
+                }
+            }
+            return ret;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message);
+            return -1;
+        }
+    }
+
+    public int RemoveUser(Guid user)
+    {
+        try
+        {
+            string sqlstr = $"DELETE FROM Users WHERE id = '{user.ToString()}';";
+            Program.app.Logger.LogDebug(sqlstr);
+            int ret = 0;
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    ret = command.ExecuteNonQuery();
+                }
+            }
+            return ret;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message);
+            return -1;
+        }
+    }
+
+    public int RemoveThread(Guid thread)
+    {
+        try
+        {
+            string sqlstr = $"DELETE FROM Thread WHERE id = '{thread.ToString()}';";
+            Program.app.Logger.LogDebug(sqlstr);
+            int ret = 0;
+            using (var con = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                con.Open();
+                using (var command = new NpgsqlCommand(sqlstr, con))
+                {
+                    ret = command.ExecuteNonQuery();
+                }
+            }
+            return ret;
+        }
+        catch (Exception e)
+        {
+            Program.app.Logger.LogError(e.Message);
+            return -1;
         }
     }
 }
