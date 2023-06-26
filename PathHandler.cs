@@ -4,6 +4,9 @@ using System.Text.Json;
 
 public class PathHandler
 {
+    /// <summary>
+    /// Обработчик пути для файлов JavaScript.
+    /// </summary>
     [Path(@"^\/(js).*$")]
     public async Task fun1(HttpContext context)
     {
@@ -12,6 +15,10 @@ public class PathHandler
         await context.Response.SendFileAsync(Program.WEB_DIR + context.Request.Path);
         return;
     }
+
+    /// <summary>
+    /// Обработчик пути для файлов CSS.
+    /// </summary>
     [Path(@"^\/(css).*$")]
     public async Task fun0(HttpContext context)
     {
@@ -21,7 +28,9 @@ public class PathHandler
         return;
     }
 
-
+    /// <summary>
+    /// Обработчик пути для API.
+    /// </summary>
     [Path(@"^\/api.*$")]
     public async Task fun2(HttpContext context)
     {
@@ -48,6 +57,10 @@ public class PathHandler
         }
         return;
     }
+
+    /// <summary>
+    /// Обработчик пути для файлов с расширениями.
+    /// </summary>
     [Path(@"^\/.*\..*$")]
     public async Task fun3(HttpContext context)
     {
@@ -62,6 +75,10 @@ public class PathHandler
         }
         return;
     }
+
+    /// <summary>
+    /// Обработчик пути по умолчанию.
+    /// </summary>
     [Path(@"\/?.*$")]
     public async Task fun4(HttpContext context)
     {
@@ -76,7 +93,6 @@ public class PathHandler
         }
         return;
     }
-
 }
 
 [AttributeUsage(AttributeTargets.Method)]

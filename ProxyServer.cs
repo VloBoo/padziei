@@ -2,10 +2,6 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-
-// Как я люблю мягкотелых, что за хуйня этот ваш iis, когда можно сделать так. 
-// Профита по месту и затратам меньше, а безопаснасть меня не мучает. 
-// И я вообще скоро линукс поставля, так что пока-пока майкрасофт.
 class ProxyServer
 {
     public static async Task Start()
