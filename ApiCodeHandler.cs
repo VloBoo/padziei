@@ -283,6 +283,8 @@ public class ApiCodeHandler
 
         string status = -1 != Database.Hinstance.RemoveThread(id) ? "OK" : "NOT";
 
+        Program.app.Logger.LogWarning(status + "!");
+
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";
         await response.WriteAsync("{\"code\":\"1\",\"body\":{\"status\":\"" + status + "\"}}");
@@ -298,7 +300,9 @@ public class ApiCodeHandler
     {
         Guid id = new Guid(jd.RootElement.GetProperty("body").GetProperty("id").ToString());
 
-        string status = -1 != Database.Hinstance.RemoveUser(id) ? "OK" : "NOT";
+        string status = -1 != Database.Hinstance.RemoveComment(id) ? "OK" : "NOT";
+
+        Program.app.Logger.LogWarning(status + "!");
 
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";
@@ -317,6 +321,8 @@ public class ApiCodeHandler
         string role = jd.RootElement.GetProperty("body").GetProperty("role").ToString();
 
         string status = -1 != Database.Hinstance.SetUserRole(id, role) ? "OK" : "NOT";
+
+        Program.app.Logger.LogWarning(status + "!");
 
         var response = context.Response;
         response.Headers.ContentType = "application/json; charset=utf-8";

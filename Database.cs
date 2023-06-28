@@ -402,11 +402,11 @@ class Database
         }
     }
 
-    public int RemoveUser(Guid user)
+    public int RemoveComment(Guid comment)
     {
         try
         {
-            string sqlstr = $"DELETE FROM Users WHERE id = '{user.ToString()}';";
+            string sqlstr = $"DELETE FROM Comments WHERE id = '{comment.ToString()}';";
             Program.app.Logger.LogDebug(sqlstr);
             int ret = 0;
             using (var con = new NpgsqlConnection(CONNECTION_STRING))
@@ -430,7 +430,7 @@ class Database
     {
         try
         {
-            string sqlstr = $"DELETE FROM Thread WHERE id = '{thread.ToString()}';";
+            string sqlstr = $"DELETE FROM Threads WHERE id = '{thread.ToString()}';";
             Program.app.Logger.LogDebug(sqlstr);
             int ret = 0;
             using (var con = new NpgsqlConnection(CONNECTION_STRING))
