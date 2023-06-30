@@ -10,7 +10,7 @@ class ProxyServer
         {
             TcpListener listener = new TcpListener(IPAddress.Any, 80);
             listener.Start();
-            Program.app.Logger.LogInformation("Proxy-server is running on: port 80 to 1984");
+            Program.app.Logger.LogInformation("Proxy-server is running on: port 80 to 5000");
 
             while (true)
             {
@@ -34,7 +34,7 @@ class ProxyServer
             {
                 // Создаем подключение к целевому серверу на порту 1984
                 TcpClient targetServer = new TcpClient();
-                await targetServer.ConnectAsync("localhost", 1984);
+                await targetServer.ConnectAsync("localhost", 5000);
 
                 // Получаем потоки для чтения и записи данных между клиентом и сервером
                 using (NetworkStream clientStream = client.GetStream())

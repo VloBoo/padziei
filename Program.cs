@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 public class Program
 {
-    public static string WEB_DIR = @"C:/Users/VloBo/Documents/code/padziei-webpages";
+    public static string WEB_DIR = @"./pages";
 
     [NotNull]
     public static WebApplication app;
